@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Punjabify</string>
+    <string name="no_val">-</string>
+    <string name="verification">Verification</string>
+    <string name="otp_info">Enter 6 digit number that sent to \n</string>
+    <string name="verify">Verify</string>
+</resources>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:elevation="10dp"
+    android:layout_width="match_parent"
+    android:layout_marginTop="100dp"
+    android:layout_height="match_parent"
+    android:paddingTop="10dp"
+    android:background="@color/colorTransparent"
+    >
+
+    <RelativeLayout
+        android:id="@+id/top_bar_queue"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:padding="10dp"
+        android:background="@drawable/rounded_top_20"
+        android:backgroundTint="#222222">
+
+        <ImageButton
+            android:id="@+id/top_bar_queue_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_arrow"
+            android:scaleType="fitCenter"
+            android:duplicateParentState="true"
+            android:rotation="180"
+            android:background="@color/colorTransparent"/>
+
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/queue_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#222222"/>
+
+</LinearLayout>

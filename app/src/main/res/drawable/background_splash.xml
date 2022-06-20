@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:opacity="opaque">
+
+    <item
+        android:drawable="@color/colorDarkBackground"/>
+
+    <item
+        android:width="300dp"
+        android:height="300dp"
+        android:left="0dp"
+        android:right="0dp"
+        android:gravity="center">
+        <bitmap
+            android:src="@drawable/ic_icon_300"
+            android:gravity="center"/>
+    </item>
+</layer-list>

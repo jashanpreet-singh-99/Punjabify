@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="120dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:duplicateParentState="true">
+
+    <Button
+        android:id="@+id/genre_btn"
+        android:layout_width="160dp"
+        android:layout_height="80dp"
+        android:background="@drawable/rounded_gradient_20_blue"
+        android:text="Sad"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:elevation="4dp"
+        android:textStyle="bold"
+        android:layout_margin="10dp"
+        android:textSize="22sp"/>
+
+</LinearLayout>

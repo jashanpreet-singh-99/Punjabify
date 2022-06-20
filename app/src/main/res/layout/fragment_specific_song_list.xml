@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:paddingBottom="90dp"
+    android:id="@+id/parent_layout">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/specific_layout_title_icon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:layout_centerInParent="true"
+            android:background="@color/colorTransparent"
+            android:paddingBottom="20dp"
+            />
+
+        <TextView
+            android:id="@+id/specific_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textAllCaps="true"
+            android:text="INFO"
+            android:textAlignment="center"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="48sp"
+            android:elevation="5dp"
+            android:layout_centerInParent="true"
+            android:textStyle="bold"/>
+
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/specific_track_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hapticFeedbackEnabled="true"
+        android:paddingTop="400dp"
+        android:clipToPadding="false"
+        />
+
+    <ProgressBar
+        android:id="@+id/loading_specific_tracks"
+        android:layout_width="wrap_content"
+        android:paddingTop="400dp"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/colorAccent"
+        android:duplicateParentState="true"
+        android:elevation="5dp"
+        android:layout_centerInParent="true"/>
+
+
+    <RelativeLayout
+        android:id="@+id/specific_icon_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:background="@drawable/foreground_gradient_black"
+        >
+
+        <ProgressBar
+            android:id="@+id/specific_layout_title_icon_loader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:duplicateParentState="true"
+            android:layout_centerInParent="true"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:duplicateParentState="true"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true">
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+
+            <ImageButton
+                android:id="@+id/like_btn"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:background="@color/colorTransparent"
+                android:src="@drawable/ic_unlike"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"/>
+
+            <Button
+                android:id="@+id/play_track_list_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorTextPrimary"
+                android:background="@drawable/rounded_btn_20"
+                android:textStyle="bold"
+                android:text="PLAY"
+                android:textSize="20sp"
+                android:paddingTop="10dp"
+                android:elevation="10dp"
+                android:paddingBottom="10dp"
+                android:paddingStart="30dp"
+                android:paddingEnd="30dp"
+                android:layout_gravity="center"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"/>
+
+            <ImageButton
+                android:id="@+id/download_btn"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:background="@color/colorTransparent"
+                android:src="@drawable/ic_download"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1047815076040",
+    "firebase_url": "https://punjabify-94072.firebaseio.com",
+    "project_id": "punjabify-94072",
+    "storage_bucket": "punjabify-94072.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1047815076040:android:ae76aa41fac2d4297acdfd",
+        "android_client_info": {
+          "package_name": "com.ck.dev.punjabify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1047815076040-rmeje2t91aoqrq5jb0jsfbj5a9ebls5b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ck.dev.punjabify",
+            "certificate_hash": "30383bba52e2ce1d609f5d1bd9295fc5da90a6c5"
+          }
+        },
+        {
+          "client_id": "1047815076040-0p9lub0rhgqvmgsj6hgfup6qjsgq7tu6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5mkPMCn5AAZpxx4YyQnkt9A6-GJmM2Ng"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1047815076040-0p9lub0rhgqvmgsj6hgfup6qjsgq7tu6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

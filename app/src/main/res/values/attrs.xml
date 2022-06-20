@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AlbumArtView">
+        <attr name="inner_color" format="color"/>
+        <attr name="outer_color" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="MusicProgressBar">
+        <attr name="progress_color" format="color"/>
+        <attr name="secondary_progress_color" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="CircularProgress">
+        <attr name="circular_progress_color" format="color"/>
+        <attr name="circular_progress" format="integer"/>
+        <attr name="circular_progress_max" format="integer"/>
+    </declare-styleable>
+
+    <declare-styleable name="VolumeBar">
+        <attr name="prime_progress_color" format="color"/>
+        <attr name="second_progress_color" format="color"/>
+        <attr name="background_color" format="color"/>
+        <attr name="volume_progress" format="integer"/>
+        <attr name="volume_progress_max" format="integer"/>
+        <attr name="volume_background" format="boolean"/>
+    </declare-styleable>
+</resources>

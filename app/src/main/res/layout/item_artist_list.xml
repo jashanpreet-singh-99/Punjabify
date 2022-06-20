@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="120dp"
+    android:layout_height="140dp"
+    >
+
+    <ImageButton
+        android:id="@+id/artist_image_btn"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:scaleType="fitCenter"
+        android:background="@drawable/oval_btn"/>
+
+    <TextView
+        android:id="@+id/artist_name_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/artist_image_btn"
+        android:minLines="2"
+        android:maxLines="2"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:textStyle="bold"
+        android:textColor="@color/colorTextPrimary"
+        android:text="Sidhu Moose Wala"
+        android:textAlignment="center"
+        android:textSize="14sp"/>
+
+    <ProgressBar
+        android:id="@+id/artist_loading_bar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:padding="10dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignTop="@id/artist_image_btn"
+        android:indeterminateTint="#ffffff"/>
+
+</RelativeLayout>

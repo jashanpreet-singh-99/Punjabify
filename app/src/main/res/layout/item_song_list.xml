@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:clickable="true"
+    android:id="@+id/grand_parent_lay"
+    android:background="#000000"
+    >
+
+    <RelativeLayout
+        android:id="@+id/item_click"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="3">
+
+        <ImageButton
+            android:id="@+id/dir_image"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="fitCenter"
+            android:duplicateParentState="true"
+            android:layout_centerInParent="true"
+            android:background="@drawable/rounded_btn_20"
+            android:elevation="1dp"
+            />
+
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:scaleType="fitCenter"
+            android:duplicateParentState="true"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_play"
+            android:clickable="false"
+            android:background="@color/colorTransparent"
+            android:elevation="1dp"
+            />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="5"
+        android:layout_gravity="center"
+        android:padding="10dp"
+        android:duplicateParentState="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/dir_title"
+            android:duplicateParentState="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:text="Song Title"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:textColor="@color/colorTextPrimary"/>
+
+        <TextView
+            android:id="@+id/dir_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="Song info"
+            android:maxLines="1"
+            android:duplicateParentState="true"
+            android:textColor="@color/colorTextSecondary"
+            />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <ImageButton
+            android:id="@+id/dir_visibility_mode"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerInParent="true"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:src="@drawable/ic_more"
+            android:background="@color/colorTransparent"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="30dp"
+    android:background="@color/colorDarkBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6"
+        android:gravity="bottom"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center"
+            android:layout_margin="20dp"
+            android:src="@drawable/ic_welcome_img"
+            android:background="@color/colorTransparent"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/colorTextPrimary"
+            android:text="Let's get started"
+            android:textSize="32sp"
+            android:layout_margin="10dp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/colorTextSecondary"
+            android:text="Welcome to Punjabify, a music app for musical people like you."
+            android:textSize="18sp"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:layout_margin="20dp"
+            android:textStyle="normal"
+            android:minLines="3"
+            android:maxLines="3"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:padding="20dp"
+        android:orientation="vertical"
+        >
+
+        <Button
+            android:id="@+id/create_account_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Register"
+            android:textStyle="normal"
+            android:textSize="20sp"
+            android:paddingTop="15dp"
+            android:layout_gravity="center"
+            android:paddingBottom="15dp"
+            android:textColor="@color/colorTextPrimary"
+            android:background="@drawable/rounded_btn_20"
+            android:layout_margin="10dp"/>
+
+    </LinearLayout>
+
+</LinearLayout>
