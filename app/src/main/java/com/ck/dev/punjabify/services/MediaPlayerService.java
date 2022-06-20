@@ -32,6 +32,7 @@ import com.ck.dev.punjabify.activities.HomeScreen;
 import com.ck.dev.punjabify.broadcast.HeadPhoneReceiver;
 import com.ck.dev.punjabify.interfaces.OnServiceBindEvent;
 import com.ck.dev.punjabify.model.ServerizedTrackData;
+import com.ck.dev.punjabify.utils.CallStatListener;
 import com.ck.dev.punjabify.utils.Config;
 import com.ck.dev.punjabify.utils.MediaCallBackConfig;
 import com.ck.dev.punjabify.utils.PlaybackStatus;
@@ -629,31 +630,57 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         }
      }
 
+     @SuppressWarnings("deprecation")
      private void callStateListener() {
          TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-         PhoneStateListener phoneStateListener = new PhoneStateListener() {
-             @Override
-             public void onCallStateChanged(int state, String phoneNumber) {
-                 switch (state) {
-                     case TelephonyManager.CALL_STATE_OFFHOOK:
-                     case TelephonyManager.CALL_STATE_RINGING:
-                         if (mediaPlayer != null) {
-                             pauseTrack();
-                             onGoingCall = true;
-                         }
-                         break;
-                     case TelephonyManager.CALL_STATE_IDLE:
-                         if (mediaPlayer != null) {
-                             if (onGoingCall) {
-                                 onGoingCall = false;
-                                 resumeTrack();
+         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+             telephonyManager.registerTelephonyCallback(getApplicationContext().getMainExecutor(), new CallStatListener() {
+                 @Override
+                 public void onCallStateChanged(int state) {
+                     switch (state) {
+                         case TelephonyManager.CALL_STATE_OFFHOOK:
+                         case TelephonyManager.CALL_STATE_RINGING:
+                             if (mediaPlayer != null) {
+                                 pauseTrack();
+                                 onGoingCall = true;
                              }
-                         }
-                         break;
+                             break;
+                         case TelephonyManager.CALL_STATE_IDLE:
+                             if (mediaPlayer != null) {
+                                 if (onGoingCall) {
+                                     onGoingCall = false;
+                                     resumeTrack();
+                                 }
+                             }
+                             break;
+                     }
                  }
-             }
-         };
-        Objects.requireNonNull(telephonyManager).listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+             });
+         } else {
+             PhoneStateListener phoneStateListener = new PhoneStateListener() {
+                 @Override
+                 public void onCallStateChanged(int state, String phoneNumber) {
+                     switch (state) {
+                         case TelephonyManager.CALL_STATE_OFFHOOK:
+                         case TelephonyManager.CALL_STATE_RINGING:
+                             if (mediaPlayer != null) {
+                                 pauseTrack();
+                                 onGoingCall = true;
+                             }
+                             break;
+                         case TelephonyManager.CALL_STATE_IDLE:
+                             if (mediaPlayer != null) {
+                                 if (onGoingCall) {
+                                     onGoingCall = false;
+                                     resumeTrack();
+                                 }
+                             }
+                             break;
+                     }
+                 }
+             };
+             Objects.requireNonNull(telephonyManager).listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+         }
      }
 
      public void setOnServiceBindEvent(OnServiceBindEvent onServiceBindEvent) {
