@@ -1,6 +1,7 @@
 package com.ck.dev.punjabify.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,11 +13,15 @@ import com.ck.dev.punjabify.utils.Config;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@SuppressLint("CustomSplashScreen")
 public class SplashScreen extends Activity {
 
     private FirebaseUser user;
 
-    private String[] permissionArray = new String[] {Manifest.permission.READ_EXTERNAL_STORAGE};
+    private final String[] permissionArray = new String[] {Manifest.permission.READ_PHONE_STATE};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,12 +35,7 @@ public class SplashScreen extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!checkPermission())
-                requestPermissions(permissionArray, Config.PERMISSION_REQUEST_CODE);
-            else
-                startNextActivity();
-        } else {
+        if (checkPermission()) {
             startNextActivity();
         }
     }
@@ -46,12 +46,24 @@ public class SplashScreen extends Activity {
      */
     private boolean checkPermission() {
         Config.LOG(Config.TAG_SPLASH, "Checking Permissions.", false);
-        int PERMISSION_EXTERNAL_READ = PackageManager.PERMISSION_DENIED;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            PERMISSION_EXTERNAL_READ = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
-            Config.LOG(Config.TAG_PERMISSION, String.valueOf(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)), false);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
         }
-        return PERMISSION_EXTERNAL_READ == PackageManager.PERMISSION_GRANTED;
+
+        List<String> pendingPermissions = new ArrayList<>();
+        for (String permission: permissionArray) {
+                if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+                    pendingPermissions.add(permission);
+                }
+        }
+        Config.LOG(Config.TAG_SPLASH, "Pending Permissions :- " + pendingPermissions.size(), false);
+
+        //Request the pending Permissions
+        if (!pendingPermissions.isEmpty()) {
+            requestPermissions(pendingPermissions.toArray(new String[0]), Config.PERMISSION_REQUEST_CODE);
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -72,17 +84,20 @@ public class SplashScreen extends Activity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        int deniedCount = 0;
         if (requestCode == Config.PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0) {
-                boolean storageR = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                if (storageR) {
-                    startNextActivity();
-                } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        requestPermissions(permissionArray, Config.PERMISSION_REQUEST_CODE);
-                    }
+            for (int i = 0; i < grantResults.length; i++) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    deniedCount++;
                 }
+                Config.LOG(Config.TAG_SPLASH, "Permission result :- " + permissions[i] + " " + grantResults[i], false);
             }
+        }
+        deniedCount++;
+        if (deniedCount == 0) {
+            startNextActivity();
+        } else {
+            checkPermission();
         }
     }
 }
