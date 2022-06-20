@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true"
-    android:background="#000000">
+    android:background="#000000"
+    android:focusable="true">
 
     <RelativeLayout
         android:id="@+id/album_art_layout"
@@ -14,14 +15,14 @@
         android:layout_height="match_parent"
         android:layout_above="@id/seek_control">
 
-        <ImageButton
-            android:duplicateParentState="true"
+        <ImageView
             android:id="@+id/album_art"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
             android:background="@color/colorTransparent"
-            />
+            android:duplicateParentState="true"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/album_art" />
 
     </RelativeLayout>
 

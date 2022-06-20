@@ -3,7 +3,7 @@ package com.ck.dev.punjabify.threads.tasks;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.ck.dev.punjabify.threads.ui.ImageButtonLoader;
 import com.ck.dev.punjabify.utils.Config;
@@ -23,7 +23,7 @@ public class AlbumArtLoader implements Runnable {
     private String path;
     private int mode = 0;
 
-    private WeakReference<ImageButton> weakReference;
+    private WeakReference<ImageView> weakReference;
     private WeakReference<Activity> contextWeakReference;
 
     @Override
@@ -53,7 +53,7 @@ public class AlbumArtLoader implements Runnable {
         }
     }
 
-    public void setMetaData(Activity activity, ImageButton imageBtn, String path, String artist, String title, int mode) {
+    public void setMetaData(Activity activity, ImageView imageBtn, String path, String artist, String title, int mode) {
         this.artist = artist;
         this.title = title;
         this.path = path;

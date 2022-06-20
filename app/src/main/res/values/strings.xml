@@ -4,4 +4,7 @@
     <string name="verification">Verification</string>
     <string name="otp_info">Enter 6 digit number that sent to \n</string>
     <string name="verify">Verify</string>
+    <string name="xxxxx_xxxxx">XXXXX-XXXXX</string>
+    <string name="download_btn">download_btn</string>
+    <string name="album_art">Album Art</string>
 </resources>

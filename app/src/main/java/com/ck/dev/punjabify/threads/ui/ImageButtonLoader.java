@@ -2,6 +2,7 @@ package com.ck.dev.punjabify.threads.ui;
 
 import android.graphics.Bitmap;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.ck.dev.punjabify.utils.Config;
 
@@ -11,7 +12,7 @@ public class ImageButtonLoader implements Runnable{
 
     private Bitmap bitmap;
     private int mode = 0;
-    private WeakReference<ImageButton> imageButtonWeakReference;
+    private WeakReference<ImageView> imageButtonWeakReference;
 
     @Override
     public void run() {
@@ -30,7 +31,7 @@ public class ImageButtonLoader implements Runnable{
         }
     }
 
-    public void setMataData(Bitmap bitmap, int mode, WeakReference<ImageButton> imageButtonWeakReference) {
+    public void setMataData(Bitmap bitmap, int mode, WeakReference<ImageView> imageButtonWeakReference) {
         this.bitmap = bitmap;
         this.mode = mode;
         this.imageButtonWeakReference = imageButtonWeakReference;

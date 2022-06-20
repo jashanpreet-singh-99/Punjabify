@@ -9,7 +9,7 @@ public class SwipeDetector implements View.OnTouchListener{
 
     private int min_distance = 50;
     private float downX, downY, upX, upY;
-    private View parent;
+    private final View parent;
 
     private OnSwipeEvent swipeEventListener;
 

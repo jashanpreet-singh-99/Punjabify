@@ -52,7 +52,7 @@ public class Config {
     public static final String IMG_DIR     = "/img/";
     public static final String TRACKS_DIR  = "/tracks/";
 
-    private static boolean DEBUGGING = true;
+    private static final boolean DEBUGGING = true;
 
     public static void LOG(String TAG, String message, boolean error) {
         if (DEBUGGING) {

@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -21,7 +22,6 @@ import androidx.fragment.app.Fragment;
 
 import com.ck.dev.punjabify.R;
 import com.ck.dev.punjabify.interfaces.MusicControlConnection;
-import com.ck.dev.punjabify.interfaces.OnSwipeEvent;
 import com.ck.dev.punjabify.model.ServerizedTrackData;
 import com.ck.dev.punjabify.threads.ThreadConfig;
 import com.ck.dev.punjabify.threads.ThreadPoolManager;
@@ -39,7 +39,7 @@ import java.util.Objects;
 public class MediaControlUI extends Fragment {
 
     private RelativeLayout albumLayout;
-    private ImageButton    albumArt;
+    private ImageView      albumArt;
     private ImageButton    pausePlayBtn;
     private TextView       trackCurrentSeek;
     private TextView       trackMaxSeek;
@@ -78,7 +78,7 @@ public class MediaControlUI extends Fragment {
 
     private GestureDetector gestureDetector;
 
-    private GestureDetector.SimpleOnGestureListener simpleOnGestureListener = new GestureDetector.SimpleOnGestureListener(){
+    private final GestureDetector.SimpleOnGestureListener simpleOnGestureListener = new GestureDetector.SimpleOnGestureListener(){
 
         @Override
         public boolean onDown(MotionEvent e) {
@@ -243,122 +243,86 @@ public class MediaControlUI extends Fragment {
         volumeBar.setVisibility(View.VISIBLE);
         Config.LOG(Config.TAG_MEDIA, "Volume " + audioManager.getStreamVolume(AudioManager.STREAM_MUSIC), true);
         volumeBar.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                volumeBar.setVisibility(View.GONE);
-            }
-        }, 500);
+        new Handler().postDelayed(() -> volumeBar.setVisibility(View.GONE), 500);
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private void onClick() {
-        pausePlayBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (musicControlConnection.isPlaying()) {
-                    musicControlConnection.pauseTrack();
-                    pausePlayBtn.setImageResource(R.drawable.ic_play);
-                } else {
-                    musicControlConnection.playTrack();
-                    pausePlayBtn.setImageResource(R.drawable.ic_pause);
-                    new Handler().post(trackSongSeek);
-                }
+        pausePlayBtn.setOnClickListener(v -> {
+            if (musicControlConnection.isPlaying()) {
+                musicControlConnection.pauseTrack();
+                pausePlayBtn.setImageResource(R.drawable.ic_play);
+            } else {
+                musicControlConnection.playTrack();
+                pausePlayBtn.setImageResource(R.drawable.ic_pause);
+                new Handler().post(trackSongSeek);
             }
         });
 
-        new SwipeDetector(albumLayout).setOnSwipeListener(new OnSwipeEvent() {
-            @Override
-            public void SwipeEventDetected(View v, SwipeDetector.SwipeTypeEnum swipeType) {
-                if (swipeType == SwipeDetector.SwipeTypeEnum.TOP_TO_BOTTOM) {
+        new SwipeDetector(albumLayout).setOnSwipeListener((v, swipeType) -> {
+            switch (swipeType) {
+                case RIGHT_TO_LEFT:
+                    musicControlConnection.nextTrack();
+                    break;
+                case LEFT_TO_RIGHT:
+                    musicControlConnection.prevTrack();
+                    break;
+                case TOP_TO_BOTTOM:
                     musicControlConnection.hideController();
-                }
-            }
-        });
-
-        new SwipeDetector(albumArt).setOnSwipeListener(new OnSwipeEvent() {
-            @Override
-            public void SwipeEventDetected(View v, SwipeDetector.SwipeTypeEnum swipeType) {
-                if (swipeType == SwipeDetector.SwipeTypeEnum.TOP_TO_BOTTOM) {
-                    musicControlConnection.hideController();
-                } else if (swipeType == SwipeDetector.SwipeTypeEnum.BOTTOM_TO_TOP) {
+                    break;
+                case BOTTOM_TO_TOP:
                     musicControlConnection.openSpecificTrackFragment(
                             PreferenceManager.getInt(getContext(), PreferenceConfig.KEY_ONLINE_QUEUE_MODE),
                             PreferenceManager.getString(getContext(), PreferenceConfig.KEY_ONLINE_QUEUE_MODE_VALUE)
                     );
                     musicControlConnection.hideController();
-                }
+                    break;
             }
         });
 
-        nextTrackBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                musicControlConnection.nextTrack();
-            }
-        });
+        nextTrackBtn.setOnClickListener(v -> musicControlConnection.nextTrack());
 
-        previousTrackBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                musicControlConnection.prevTrack();
-            }
-        });
+        previousTrackBtn.setOnClickListener(v -> musicControlConnection.prevTrack());
 
-        musicProgressBar.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                trackCurrentSeek.setText(getFormatDuration(String.valueOf(musicProgressBar.getProgress())));
-                if (gestureDetector.onTouchEvent(event)) {
-                    return true;
+        musicProgressBar.setOnTouchListener((v, event) -> {
+            trackCurrentSeek.setText(getFormatDuration(String.valueOf(musicProgressBar.getProgress())));
+            if (gestureDetector.onTouchEvent(event)) {
+                return true;
+            } else {
+                Config.LOG(Config.TAG_ALBUM_VIEW, "Moved! Baby.", false);
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    Config.LOG(Config.TAG_ALBUM_VIEW, "Up! Baby.", false);
+                    musicControlConnection.setCurrentSeek(musicProgressBar.getProgress());
+                    stopTracking = false;
+                    new Handler().post(trackSongSeek);
                 } else {
                     Config.LOG(Config.TAG_ALBUM_VIEW, "Moved! Baby.", false);
-                    if (event.getAction() == MotionEvent.ACTION_UP) {
-                        Config.LOG(Config.TAG_ALBUM_VIEW, "Up! Baby.", false);
-                        musicControlConnection.setCurrentSeek(musicProgressBar.getProgress());
-                        stopTracking = false;
-                        new Handler().post(trackSongSeek);
-                    } else {
-                        Config.LOG(Config.TAG_ALBUM_VIEW, "Moved! Baby.", false);
-                    }
-                    return false;
                 }
+                return false;
             }
         });
 
-        incrementVolume.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE,0);
-                updateVolumeBar();
-            }
+        incrementVolume.setOnClickListener(v -> {
+            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE,0);
+            updateVolumeBar();
         });
 
-        decrementVolume.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER,0);
-                updateVolumeBar();
-            }
+        decrementVolume.setOnClickListener(v -> {
+            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER,0);
+            updateVolumeBar();
         });
 
-        openQueueBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                musicControlConnection.openSpecificTrackFragment(
-                        PreferenceManager.getInt(getContext(), PreferenceConfig.KEY_ONLINE_QUEUE_MODE),
-                        PreferenceManager.getString(getContext(), PreferenceConfig.KEY_ONLINE_QUEUE_MODE_VALUE)
-                );
-                musicControlConnection.hideController();
-            }
+        openQueueBtn.setOnClickListener(v -> {
+            musicControlConnection.openSpecificTrackFragment(
+                    PreferenceManager.getInt(getContext(), PreferenceConfig.KEY_ONLINE_QUEUE_MODE),
+                    PreferenceManager.getString(getContext(), PreferenceConfig.KEY_ONLINE_QUEUE_MODE_VALUE)
+            );
+            musicControlConnection.hideController();
         });
 
-        downloadBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Config.LOG(Config.TAG_DOWNLOAD, "Starting to download " + currentOnlineTrack.getTitle(), false);
-                musicControlConnection.downloadTrack(currentOnlineTrack);
-            }
+        downloadBtn.setOnClickListener(v -> {
+            Config.LOG(Config.TAG_DOWNLOAD, "Starting to download " + currentOnlineTrack.getTitle(), false);
+            musicControlConnection.downloadTrack(currentOnlineTrack);
         });
     }
 
