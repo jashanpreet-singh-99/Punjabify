@@ -116,13 +116,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     }
 
     private String createNotificationChannel() {
-        NotificationChannel chan;
+        NotificationChannel channel;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            chan = new NotificationChannel(Config.CHANNEL_ID, "Playing Tracks ", NotificationManager.IMPORTANCE_MIN);
-            chan.setLightColor( Color.BLUE);
-            chan.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+            channel = new NotificationChannel(Config.CHANNEL_ID, "Playing Tracks ", NotificationManager.IMPORTANCE_MIN);
+            channel.setLightColor( Color.BLUE);
+            channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
             NotificationManager service = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            Objects.requireNonNull(service).createNotificationChannel(chan);
+            Objects.requireNonNull(service).createNotificationChannel(channel);
             return Config.CHANNEL_ID;
         }
         return "None";
@@ -148,11 +148,16 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         Intent intent = new Intent(getApplicationContext(), HomeScreen.class);
         intent.setAction(MediaCallBackConfig.ACTION_OPEN_CONTROLLER);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
+        PendingIntent pendingIntent;
+        int flag = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            flag = PendingIntent.FLAG_IMMUTABLE;
+        }
+        pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, flag);
 
         Intent killIntent = new Intent(getApplicationContext(), MediaPlayerService.class);
         killIntent.setAction(MediaCallBackConfig.ACTION_KILL);
-        PendingIntent killPendingIntent = PendingIntent.getService(getApplicationContext(), 0, killIntent, 0);
+        PendingIntent killPendingIntent = PendingIntent.getService(getApplicationContext(), 0, killIntent, flag);
 
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, Config.CHANNEL_ID);
@@ -582,19 +587,23 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     private PendingIntent playbackIntentAction(int action) {
         Intent playbackAction = new Intent(this, MediaPlayerService.class);
-        switch (action) {
+        int flag = 0;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            flag = PendingIntent.FLAG_IMMUTABLE;
+        }
+            switch (action) {
             case 0:
                 playbackAction.setAction(MediaCallBackConfig.ACTION_PLAY);
-                return PendingIntent.getService(this, action, playbackAction, 0);
+                return PendingIntent.getService(this, action, playbackAction, flag);
             case 1:
                 playbackAction.setAction(MediaCallBackConfig.ACTION_PAUSE);
-                return PendingIntent.getService(this, action, playbackAction, 0);
+                return PendingIntent.getService(this, action, playbackAction, flag);
             case 2:
                 playbackAction.setAction(MediaCallBackConfig.ACTION_NEXT);
-                return PendingIntent.getService(this, action, playbackAction, 0);
+                return PendingIntent.getService(this, action, playbackAction, flag);
             case 3:
                 playbackAction.setAction(MediaCallBackConfig.ACTION_PREVIOUS);
-                return PendingIntent.getService(this, action, playbackAction, 0);
+                return PendingIntent.getService(this, action, playbackAction, flag);
             default:
                 break;
         }
