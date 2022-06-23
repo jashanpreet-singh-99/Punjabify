@@ -11,7 +11,7 @@ import java.util.Objects;
 
 public class HeadPhoneReceiver extends BroadcastReceiver {
 
-    private MediaPlayerService mediaPlayerService;
+    private final MediaPlayerService mediaPlayerService;
 
     public HeadPhoneReceiver(MediaPlayerService mediaPlayerService) {
         this.mediaPlayerService = mediaPlayerService;
