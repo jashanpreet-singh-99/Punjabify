@@ -53,6 +53,8 @@ public class ServerizedManager extends SQLiteOpenHelper {
                         ServerizedConfig.COLUMN_RELEASE + " TEXT," +
                         ServerizedConfig.COLUMN_ROMANTIC + " INTEGER NOT NULL CHECK (" + ServerizedConfig.COLUMN_ROMANTIC +" IN (0,1))," +
                         ServerizedConfig.COLUMN_SAD + " INTEGER NOT NULL CHECK (" + ServerizedConfig.COLUMN_SAD +" IN (0,1))," +
+                        ServerizedConfig.COLUMN_DOWNLOADED + " INTEGER NOT NULL CHECK (" + ServerizedConfig.COLUMN_DOWNLOADED +" IN (0,1))," +
+                        ServerizedConfig.COLUMN_ERROR + " INTEGER NOT NULL CHECK (" + ServerizedConfig.COLUMN_ERROR +" IN (0,1))," +
                         ServerizedConfig.COLUMN_TITLE + " TEXT " +
                         ")"
         );
@@ -122,6 +124,8 @@ public class ServerizedManager extends SQLiteOpenHelper {
         contentValues.put(ServerizedConfig.COLUMN_RELEASE, serverizedTrackData.getRelease());
         contentValues.put(ServerizedConfig.COLUMN_ROMANTIC, serverizedTrackData.getRomantic());
         contentValues.put(ServerizedConfig.COLUMN_SAD, serverizedTrackData.getSad());
+        contentValues.put(ServerizedConfig.COLUMN_DOWNLOADED, serverizedTrackData.getDownloaded());
+        contentValues.put(ServerizedConfig.COLUMN_ERROR, serverizedTrackData.getError());
         contentValues.put(ServerizedConfig.COLUMN_TITLE, serverizedTrackData.getTitle());
         return Integer.parseInt(database.insert(ServerizedConfig.TABLE_NAME, null, contentValues) + "");
     }
@@ -164,7 +168,7 @@ public class ServerizedManager extends SQLiteOpenHelper {
         SQLiteDatabase database = this.getWritableDatabase();
         try {
             database.execSQL("UPDATE " + ServerizedConfig.TABLE_NAME + " SET " +
-                    ServerizedConfig.COLUMN_LINK + "='" + Config.DOWNLOADED_TRACK  + "' WHERE " +
+                    ServerizedConfig.COLUMN_DOWNLOADED + "=" + 1 + " WHERE " +
                     ServerizedConfig.COLUMN_INDEX + "=" + id + "");
             return true;
         } catch (Exception e) {
@@ -198,46 +202,6 @@ public class ServerizedManager extends SQLiteOpenHelper {
         return Integer.parseInt(database.insert(ServerizedConfig.TABLE_ARTIST + name, null, contentValues) + "");
     }
 
-    public ArrayList<ServerizedTrackData> getArtists(Boolean followed) {
-        SQLiteDatabase database = this.getReadableDatabase();
-        ArrayList<ServerizedTrackData> data = new ArrayList<>();
-        Cursor cursor;
-        if (followed) {
-            cursor = database.rawQuery("SELECT * FROM " + ServerizedConfig.TABLE_ARTIST_ALL + " WHERE " + ServerizedConfig.COLUMN_FOLLOW + "=1", null);
-        } else {
-            cursor = database.rawQuery("SELECT * FROM " + ServerizedConfig.TABLE_ARTIST_ALL, null);
-        }
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            ServerizedTrackData serverizedTrackData = new ServerizedTrackData(
-                    0,
-                    null,
-                    cursor.getString(cursor.getColumnIndex(ServerizedConfig.COLUMN_ARTIST)),
-                    -1,
-                    null,
-                    -1,
-                    -1,
-                    -1,
-                    "",
-                    -1,
-                    -1,
-                    -1,
-                    -1,
-                    -1,
-                    -1,
-                    -1,
-                    null,
-                    -1,
-                    -1,
-                    null
-            );
-            data.add(serverizedTrackData);
-            cursor.moveToNext();
-        }
-        cursor.close();
-        return data;
-    }
-
     public ArrayList<String> getArtistsNameOnly(int mode) {
         SQLiteDatabase database = this.getReadableDatabase();
         ArrayList<String> data = new ArrayList<>();
@@ -255,7 +219,7 @@ public class ServerizedManager extends SQLiteOpenHelper {
         }
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            data.add(cursor.getString(cursor.getColumnIndex(ServerizedConfig.COLUMN_ARTIST)));
+            data.add(cursor.getString(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_ARTIST)));
             cursor.moveToNext();
         }
         cursor.close();
@@ -269,7 +233,7 @@ public class ServerizedManager extends SQLiteOpenHelper {
         Cursor cursor = database.rawQuery("SELECT * FROM " + ServerizedConfig.TABLE_ARTIST + artist + " ORDER BY " + ServerizedConfig.COLUMN_RELEASE + " DESC" , null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            data.add(getIdSpecificTrack(cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_ROW_ID))));
+            data.add(getIdSpecificTrack(cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_ROW_ID))));
             cursor.moveToNext();
         }
         cursor.close();
@@ -282,7 +246,7 @@ public class ServerizedManager extends SQLiteOpenHelper {
         Cursor cursor = database.rawQuery("SELECT * FROM " + ServerizedConfig.TABLE_GENRE + genre + " ORDER BY " + ServerizedConfig.COLUMN_RELEASE + " DESC", null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            ServerizedTrackData serverizedTrackData = getIdSpecificTrack(cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_ROW_ID)));
+            ServerizedTrackData serverizedTrackData = getIdSpecificTrack(cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_ROW_ID)));
             if (serverizedTrackData != null) {
                 data.add(serverizedTrackData);
             }
@@ -297,28 +261,30 @@ public class ServerizedManager extends SQLiteOpenHelper {
         Cursor cursor = database.rawQuery("SELECT * FROM " + ServerizedConfig.TABLE_NAME + " WHERE " + ServerizedConfig.COLUMN_INDEX + "=" + id + "", null);
         cursor.moveToFirst();
         ServerizedTrackData trackData = new ServerizedTrackData(
-                cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_INDEX)),
-                cursor.getString(cursor.getColumnIndex(ServerizedConfig.COLUMN_ALBUM)),
-                cursor.getString(cursor.getColumnIndex(ServerizedConfig.COLUMN_ARTIST)),
-                cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_GEDI)),
-                cursor.getString(cursor.getColumnIndex(ServerizedConfig.COLUMN_GENDER)),
-                cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_HIP_HOP)),
-                cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_JATTISM)),
-                cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_LEGEND)),
-                cursor.getString(cursor.getColumnIndex(ServerizedConfig.COLUMN_LINK)),
-                cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_LONG_DRIVE)),
-                cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_MAHFIL)),
-                cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_ORIGINAL)),
-                cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_PARENTAL)),
-                cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_PRO)),
-                cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_PARTY)),
-                cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_RAP)),
-                cursor.getString(cursor.getColumnIndex(ServerizedConfig.COLUMN_RELEASE)),
-                cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_ROMANTIC)),
-                cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_SAD)),
-                cursor.getString(cursor.getColumnIndex(ServerizedConfig.COLUMN_TITLE))
+                cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_INDEX)),
+                cursor.getString(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_ALBUM)),
+                cursor.getString(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_ARTIST)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_GEDI)),
+                cursor.getString(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_GENDER)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_HIP_HOP)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_JATTISM)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_LEGEND)),
+                cursor.getString(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_LINK)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_LONG_DRIVE)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_MAHFIL)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_ORIGINAL)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_PARENTAL)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_PRO)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_PARTY)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_RAP)),
+                cursor.getString(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_RELEASE)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_ROMANTIC)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_SAD)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_DOWNLOADED)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_ERROR)),
+                cursor.getString(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_TITLE))
         );
-        if (!isArtistFollowed(cursor.getString(cursor.getColumnIndex(ServerizedConfig.COLUMN_ARTIST)))) {
+        if (!isArtistFollowed(cursor.getString(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_ARTIST)))) {
             return null;
         }
         cursor.close();
@@ -329,7 +295,7 @@ public class ServerizedManager extends SQLiteOpenHelper {
         SQLiteDatabase database = this.getReadableDatabase();
         Cursor cursor = database.rawQuery("SELECT * FROM " + ServerizedConfig.TABLE_ARTIST_ALL + " WHERE " + ServerizedConfig.COLUMN_ARTIST + "='" + artist + "'", null);
         cursor.moveToFirst();
-        int follow = cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_FOLLOW));
+        int follow = cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_FOLLOW));
         cursor.close();
         return follow == 1;
     }
@@ -362,7 +328,7 @@ public class ServerizedManager extends SQLiteOpenHelper {
             Cursor cursor = database.rawQuery("SELECT * FROM " + ServerizedConfig.QUEUE_NAME, null);
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                data.add(cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_ROW_ID)));
+                data.add(cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_ROW_ID)));
                 cursor.moveToNext();
             }
             cursor.close();
@@ -425,7 +391,7 @@ public class ServerizedManager extends SQLiteOpenHelper {
             Cursor cursor = database.rawQuery("SELECT * FROM " + ServerizedConfig.DOWNLOAD_QUEUE, null);
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                data.add(getIdSpecificTrack(cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_ROW_ID))));
+                data.add(getIdSpecificTrack(cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_ROW_ID))));
                 cursor.moveToNext();
             }
             cursor.close();
@@ -461,26 +427,28 @@ public class ServerizedManager extends SQLiteOpenHelper {
         Config.LOG(Config.TAG_DATABASE, "Track Year Added " + year + " " + cursor.getCount(), true);
         while (!cursor.isAfterLast()) {
             ServerizedTrackData trackData = new ServerizedTrackData(
-                    cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_INDEX)),
-                    cursor.getString(cursor.getColumnIndex(ServerizedConfig.COLUMN_ALBUM)),
-                    cursor.getString(cursor.getColumnIndex(ServerizedConfig.COLUMN_ARTIST)),
-                    cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_GEDI)),
-                    cursor.getString(cursor.getColumnIndex(ServerizedConfig.COLUMN_GENDER)),
-                    cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_HIP_HOP)),
-                    cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_JATTISM)),
-                    cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_LEGEND)),
-                    cursor.getString(cursor.getColumnIndex(ServerizedConfig.COLUMN_LINK)),
-                    cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_LONG_DRIVE)),
-                    cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_MAHFIL)),
-                    cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_ORIGINAL)),
-                    cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_PARENTAL)),
-                    cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_PRO)),
-                    cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_PARTY)),
-                    cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_RAP)),
-                    cursor.getString(cursor.getColumnIndex(ServerizedConfig.COLUMN_RELEASE)),
-                    cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_ROMANTIC)),
-                    cursor.getInt(cursor.getColumnIndex(ServerizedConfig.COLUMN_SAD)),
-                    cursor.getString(cursor.getColumnIndex(ServerizedConfig.COLUMN_TITLE))
+                    cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_INDEX)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_ALBUM)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_ARTIST)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_GEDI)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_GENDER)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_HIP_HOP)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_JATTISM)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_LEGEND)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_LINK)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_LONG_DRIVE)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_MAHFIL)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_ORIGINAL)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_PARENTAL)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_PRO)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_PARTY)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_RAP)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_RELEASE)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_ROMANTIC)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_SAD)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_DOWNLOADED)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_ERROR)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_TITLE))
             );
             Config.LOG(Config.TAG_DATABASE, "Track Year Added " + year + " " + trackData.getTitle(), false);
             data.add(trackData);
