@@ -11,6 +11,11 @@ import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,12 +30,16 @@ import com.ck.dev.punjabify.interfaces.OnDownloadQueueClicks;
 import com.ck.dev.punjabify.model.DownloadData;
 import com.ck.dev.punjabify.model.ServerizedTrackData;
 import com.ck.dev.punjabify.services.DownloadManagerService;
+import com.ck.dev.punjabify.threads.ThreadConfig;
+import com.ck.dev.punjabify.threads.ThreadPoolManager;
 import com.ck.dev.punjabify.threads.interfaces.UiTrackDownloadingThreadCallBack;
-import com.ck.dev.punjabify.threads.tasks.TrackUrlDownloader;
+import com.ck.dev.punjabify.threads.tasks.AlbumArtLoader;
 import com.ck.dev.punjabify.utils.Config;
 import com.ck.dev.punjabify.utils.ServerizedManager;
+import com.ck.dev.punjabify.view.CircularProgress;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,10 +47,19 @@ import java.util.concurrent.Executors;
 public class DownloadFragment extends Fragment implements OnDownloadQueueClicks, UiTrackDownloadingThreadCallBack {
 
     private RecyclerView downloadQueueList;
+    private TextView     noDownloadTextView;
+    private Button       clearAllBtn;
+
+    private LinearLayout     currentDownloadLayout;
+    private CircularProgress downloadProgress;
+    private ImageView        albumArtView;
+    private TextView         trackTitleTxt;
+    private TextView         progressTxt;
+    private ImageButton      cancelBtn;
 
     private DownloadTrackListAdapter downloadTrackListAdapter;
 
-    private ArrayList<DownloadData> downloadData = new ArrayList<>();
+    private final ArrayList<DownloadData> downloadData = new ArrayList<>();
 
     private ServerizedManager serverizedManager;
 
@@ -73,7 +91,16 @@ public class DownloadFragment extends Fragment implements OnDownloadQueueClicks,
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_download, container, false);
-        downloadQueueList = view.findViewById(R.id.download_queue_list);
+        downloadQueueList     = view.findViewById(R.id.download_queue_list);
+        noDownloadTextView    = view.findViewById(R.id.no_download_txt);
+        clearAllBtn           = view.findViewById(R.id.clear_all_btn);
+
+        currentDownloadLayout = view.findViewById(R.id.current_download_stat);
+        downloadProgress      = view.findViewById(R.id.downloading_progress);
+        albumArtView          = view.findViewById(R.id.album_art_btn);
+        trackTitleTxt         = view.findViewById(R.id.track_title);
+        progressTxt           = view.findViewById(R.id.downloading_progress_txt);
+        cancelBtn             = view.findViewById(R.id.cancel_btn);
 
         serverizedManager = new ServerizedManager(getContext());
 
@@ -83,15 +110,38 @@ public class DownloadFragment extends Fragment implements OnDownloadQueueClicks,
 
         updateDownloadTracks();
 
+        onClick();
         return view;
     }
 
-    private ServiceConnection serviceConnection = new ServiceConnection() {
+    private void onClick() {
+
+        clearAllBtn.setOnClickListener((v) -> {
+            if (downloadManager != null) {
+                if (downloadData.size() == 0) {
+                    return;
+                }
+
+                downloadTrackListAdapter.notifyItemRangeRemoved(0, downloadData.size());
+                downloadManager.clearDownloadQueue();
+                downloadData.clear();
+                noDownloadTextView.setVisibility(View.VISIBLE);
+                currentDownloadLayout.setVisibility(View.GONE);
+            } else {
+                Config.LOG(Config.TAG_DOWNLOAD, "Clearing Download Queue. Error", true);
+            }
+        });
+
+        cancelBtn.setOnClickListener((v) -> onTrackCanceled(0));
+    }
+
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Config.LOG(Config.TAG_DOWNLOAD, "Trying to create service connection with download manager.", false);
             DownloadManagerService.LocalBinder binder = (DownloadManagerService.LocalBinder) service;
             downloadManager = binder.getService();
+            downloadManager.setCallBack(DownloadFragment.this);
             DOWNLOAD_MANAGER_BOUNDED = true;
             updateDownloadTracks();
         }
@@ -107,6 +157,7 @@ public class DownloadFragment extends Fragment implements OnDownloadQueueClicks,
         if (DOWNLOAD_MANAGER_BOUNDED) {
             Config.LOG(Config.TAG_DOWNLOAD, "Already the service is running", false);
             updateDownloadTracks();
+            downloadManager.setCallBack(DownloadFragment.this);
             return;
         }
         Intent intent = new Intent(getContext(), DownloadManagerService.class);
@@ -116,41 +167,30 @@ public class DownloadFragment extends Fragment implements OnDownloadQueueClicks,
             Objects.requireNonNull(getContext()).startService(intent);
         }
         getContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-        serverizedManager.clearDownloadQueue();
+        // Move to on Service connected ->
+
+        //serverizedManager.clearDownloadQueue();
     }
 
     public void updateDownloadTracks(){
         if (downloadManager == null) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    startDownloadManager();
-                    updateDownloadTracks();
-                }
-            }, 100);
+            new Handler().postDelayed(this::startDownloadManager, 100);
         } else {
+            downloadManager.updateDownloadQueue();
             downloadData.clear();
-            Config.LOG(Config.TAG_DOWNLOAD, "Updating Queue", false);
+            Config.LOG(Config.TAG_DOWNLOAD, "Updating Download Queue", false);
             downloadData.addAll(downloadManager.getDownloadQueue());
-            downloadTrackListAdapter.notifyDataSetChanged();
+            Config.LOG(Config.TAG_DOWNLOAD, "Download Queue Size : " + downloadData.size(), false);
+            if (downloadData.size() <= 0 ) {
+                noDownloadTextView.setVisibility(View.VISIBLE);
+                currentDownloadLayout.setVisibility(View.GONE);
+            } else {
+                noDownloadTextView.setVisibility(View.GONE);
+                downloadTrackListAdapter.notifyItemRangeInserted(0, downloadData.size());
+            }
         }
     }
 
-//    private void downloadFirstQueueTrack() {
-//        TrackUrlDownloader trackUrlDownloader = new TrackUrlDownloader();
-//        trackUrlDownloader.setMetaData(
-//                this,
-//                Objects.requireNonNull(getContext()).getCacheDir() + Config.TRACKS_DIR,
-//                downloadData.get(0).getTrackData()
-//        );
-//        if (executorService == null) {
-//            executorService = Executors.newSingleThreadExecutor();
-//        }
-//        executorService.submit(trackUrlDownloader);
-//        Config.LOG(Config.TAG_DOWNLOAD, "Starting to Download track present in queue.", false);
-//
-//    }
-//
     public void insertDownloadTrack(int index){
         downloadData.add(new DownloadData(serverizedManager.getIdSpecificTrack(index), 0));
         downloadTrackListAdapter.notifyItemChanged(downloadData.size());
@@ -169,9 +209,9 @@ public class DownloadFragment extends Fragment implements OnDownloadQueueClicks,
         Config.LOG(Config.TAG_DOWNLOAD, "Track Canceled " + downloadData.get(pos).getTrackData().getTitle(), false);
         if (pos == 0) {
             downloadData.remove(0);
-            downloadTrackListAdapter.notifyDataSetChanged();
+            downloadTrackListAdapter.notifyItemRemoved(0);
             if (downloadData.size() > 0) {
-//                downloadFirstQueueTrack();
+                downloadManager.downloadFirstQueueTrack();
                 homeToDownloadFragment.changeDownloadBtnVisibility(true);
             } else {
                 homeToDownloadFragment.changeDownloadBtnVisibility(false);
@@ -183,41 +223,45 @@ public class DownloadFragment extends Fragment implements OnDownloadQueueClicks,
     }
 
     public void progressUpdated(int progress) {
-        Config.LOG(Config.TAG_DOWNLOAD, "Track Downloaded " + Config.convertToMB(progress), false);
+        //Config.LOG(Config.TAG_DOWNLOAD, "Track Downloaded " + Config.convertToMB(progress), false);
         int progressPercent = (progress * 100)/CURRENT_MAX;
-        downloadData.get(0).setProgress(progressPercent);
-        Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                downloadTrackListAdapter.notifyItemChanged(0);
-            }
-        });
+        downloadProgress.setProgress(progressPercent);
+        progressTxt.setText(String.format(Locale.ENGLISH,"Downloading %d %%", progressPercent));
     }
 
     public void trackDownloaded(int id) {
-        boolean work = serverizedManager.updateTrackToDownloaded(id);
-        if (work) {
-            serverizedManager.removeDownloadQueueTrack(id);
-            downloadData.remove(0);
-            Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    downloadTrackListAdapter.notifyDataSetChanged();
-                }
-            });
+        downloadData.remove(0);
+        Objects.requireNonNull(getActivity()).runOnUiThread(() -> downloadTrackListAdapter.notifyItemRemoved(0));
+        if (downloadData.size() <= 0) {
+            noDownloadTextView.setVisibility(View.VISIBLE);
+            currentDownloadLayout.setVisibility(View.GONE);
         }
-        Config.LOG(Config.TAG_DOWNLOAD, "Track Downloaded To Local Dir " + work, false);
-        if (downloadData.size() > 0) {
-//            downloadFirstQueueTrack();
-            homeToDownloadFragment.changeDownloadBtnVisibility(true);
-        } else {
-            homeToDownloadFragment.changeDownloadBtnVisibility(false);
-        }
+        homeToDownloadFragment.changeDownloadBtnVisibility(downloadData.size() > 0);
     }
 
     public void alreadyDownloaded() {
         Config.LOG(Config.TAG_DOWNLOAD, "Process the next Track to Download", false);
         onTrackCanceled(0);
+    }
+
+    @Override
+    public void startTrackDownload(ServerizedTrackData track) {
+        if (currentDownloadLayout.getVisibility() == View.GONE)
+            currentDownloadLayout.setVisibility(View.VISIBLE);
+        downloadProgress.setProgress(0);
+        trackTitleTxt.setText(track.getTitle());
+        progressTxt.setText(String.format(Locale.ENGLISH,"Downloading %d %%", 0));
+        albumArtView.setBackgroundResource(R.color.colorAccent);
+        AlbumArtLoader albumArtLoader = new AlbumArtLoader();
+        albumArtLoader.setMetaData(
+                requireActivity(),
+                albumArtView,
+                requireActivity().getCacheDir() + Config.ART_DIR,
+                track.getArtist(),
+                track.getTitle(),
+                2
+        );
+        ThreadPoolManager.getInstance().addCallable(albumArtLoader, ThreadConfig.IMAGE_LOAD);
     }
 
     public void updateMax(int max) {
