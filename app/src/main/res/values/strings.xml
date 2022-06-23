@@ -7,4 +7,11 @@
     <string name="xxxxx_xxxxx">XXXXX-XXXXX</string>
     <string name="download_btn">download_btn</string>
     <string name="album_art">Album Art</string>
+    <string name="downloads">Downloads</string>
+    <string name="no_pending_downloads">No pending downloads.</string>
+    <string name="song_title">Song Title</string>
+    <string name="downloading_0">Downloading 0%</string>
+    <string name="cancel">Cancel</string>
+    <string name="waiting_in_queue">Waiting in Queue.</string>
+    <string name="clear_all">Clear All</string>
 </resources>
