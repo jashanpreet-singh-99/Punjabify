@@ -25,6 +25,8 @@ public class ServerizedDataFetcher implements Runnable {
 
     @Override
     public void run() {
+        // clear old data in the cache
+        serverizedManager.dropOldData();
         //  Iterate over each Artist
         for (DataSnapshot data: dataSnapshot.getChildren()) {
             String artist = data.getKey();
