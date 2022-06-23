@@ -200,7 +200,7 @@ public class HomeScreen extends FragmentActivity implements MusicControlConnecti
      * Used to start Media Service if not Running.
      */
     private void startMediaService() {
-        Intent intent = new Intent(this, MediaPlayerService.class);
+        Intent intent = new Intent(getApplicationContext(), MediaPlayerService.class);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(intent);
         } else {
@@ -254,25 +254,17 @@ public class HomeScreen extends FragmentActivity implements MusicControlConnecti
             }
         });
 
-        navBarMusic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideShowFragment(mediaControlUI, true);
-            }
-        });
+        navBarMusic.setOnClickListener(v -> hideShowFragment(mediaControlUI, true));
 
-        downloadFragmentBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Config.LOG(Config.TAG_HOME, "show download fragment", false);
-                hideShowFragment(downloadFragment, true);
-                downloadFragmentBtn.setVisibility(View.GONE);
-            }
+        downloadFragmentBtn.setOnClickListener(v -> {
+            Config.LOG(Config.TAG_HOME, "show download fragment", false);
+            hideShowFragment(downloadFragment, true);
+            downloadFragmentBtn.setVisibility(View.GONE);
         });
 
     }
 
-    private ServiceConnection serviceConnection = new ServiceConnection() {
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Config.LOG(Config.TAG_MEDIA, "Service Connected to UI.", false);
@@ -531,7 +523,7 @@ public class HomeScreen extends FragmentActivity implements MusicControlConnecti
 
     @Override
     public void downloadTrack(ServerizedTrackData track) {
-        if (track.getLink().equals(Config.DOWNLOADED_TRACK)) {
+        if (track.getDownloaded() == 1) {
             Config.LOG(Config.TAG_DOWNLOAD, "Already Downloaded. So skipping this track.", false);
             return;
         }
@@ -608,7 +600,6 @@ public class HomeScreen extends FragmentActivity implements MusicControlConnecti
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             Config.LOG(Config.TAG_MEDIA_ONLINE, "Online Data Fetch ", false);
-                            serverizedManager.dropOldData();
                             ServerizedDataFetcher serverizedDataFetcher = new ServerizedDataFetcher();
                             serverizedDataFetcher.setMetaData(dataSnapshot, serverizedManager, getCacheDir() + Config.TRACKS_DIR, HomeScreen.this);
                             threadPoolManager.addCallable(serverizedDataFetcher, ThreadConfig.SERVERIZED_DATA);
@@ -644,12 +635,7 @@ public class HomeScreen extends FragmentActivity implements MusicControlConnecti
     @Override
     public void changeDownloadBtnVisibility(final Boolean state) {
         if (downloadFragmentBtn == null) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    changeDownloadBtnVisibility(state);
-                }
-            }, 50);
+            new Handler().postDelayed(() -> changeDownloadBtnVisibility(state), 50);
         } else {
             if (state) {
                 if (downloadFragmentBtn.getVisibility() == View.GONE && !downloadFragment.isVisible()) {
