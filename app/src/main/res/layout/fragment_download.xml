@@ -1,32 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
     android:paddingTop="30dp"
     android:paddingStart="10dp"
-    android:paddingEnd="10dp">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:textColor="@color/colorTextPrimary"
-        android:textSize="24sp"
-        android:padding="10dp"
-        android:text="Downloads"/>
+    android:paddingEnd="10dp"
+    android:paddingBottom="90dp">
 
     <LinearLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="28sp"
+            android:padding="10dp"
+            android:text="@string/downloads"/>
+
+        <Button
+            android:id="@+id/clear_all_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/clear_all"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:layout_margin="4dp"
+            android:background="@drawable/rounded_border_btn_20"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/no_download_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorTextSecondary"
+        android:textSize="16sp"
+        android:padding="10dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:textAlignment="center"
+        android:text="@string/no_pending_downloads"/>
+
+    <LinearLayout
+        android:id="@+id/current_download_stat"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/grand_parent_lay"
-        android:background="#000000">
+        android:background="#000000"
+        android:padding="10dp"
+        android:baselineAligned="false">
 
         <RelativeLayout
-            android:id="@+id/downloading_item_icon_lay"
+            android:id="@+id/item_click"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -44,17 +78,17 @@
                 />
 
             <ImageButton
-                android:id="@+id/downloading_album_art"
+                android:id="@+id/album_art_btn"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:scaleType="fitCenter"
-                android:duplicateParentState="true"
                 android:layout_centerInParent="true"
-                android:clickable="false"
                 android:background="@drawable/oval_btn"
                 android:backgroundTint="@color/colorTransparent"
+                android:clickable="false"
+                android:contentDescription="@string/album_art"
+                android:duplicateParentState="true"
                 android:elevation="1dp"
-                />
+                android:scaleType="fitCenter" />
 
         </RelativeLayout>
 
@@ -68,12 +102,12 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/downloading_track_title"
+                android:id="@+id/track_title"
                 android:duplicateParentState="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
-                android:text="Song Title"
+                android:text="@string/song_title"
                 android:textStyle="bold"
                 android:layout_marginBottom="10dp"
                 android:maxLines="1"
@@ -84,7 +118,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
-                android:text="Downloading 0%"
+                android:text="@string/downloading_0"
                 android:maxLines="1"
                 android:duplicateParentState="true"
                 android:textColor="@color/colorTextSecondary"
@@ -92,22 +126,19 @@
 
         </LinearLayout>
 
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:padding="10dp"
-            android:layout_weight="1">
 
             <ImageButton
-                android:id="@+id/downloading_cancel_btn"
+                android:id="@+id/cancel_btn"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_cancel"
-                android:background="@color/colorTransparent"/>
+                android:background="@color/colorTransparent"
+                android:contentDescription="@string/cancel" />
 
-        </RelativeLayout>
 
     </LinearLayout>
 
