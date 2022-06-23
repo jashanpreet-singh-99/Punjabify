@@ -26,6 +26,9 @@ public class ServerizedConfig {
     public static final String COLUMN_ROMANTIC   = "ServerTrackRomantic";
     public static final String COLUMN_SAD        = "ServerTrackSad";
 
+    public static final String COLUMN_DOWNLOADED   = "ServerTrackDownloaded";
+    public static final String COLUMN_ERROR        = "ServerTrackError";
+
     public static final String COLUMN_ROW_ID = "ServerTrackRowId";
     public static final String COLUMN_FOLLOW = "ServerTrackArtistFollowed";
 
