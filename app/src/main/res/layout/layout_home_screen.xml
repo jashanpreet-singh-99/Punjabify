@@ -5,6 +5,7 @@
     android:background="#000000">
 
     <ImageButton
+        android:visibility="visible"
         android:id="@+id/download_fragment_btn"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -15,7 +16,8 @@
         android:layout_alignParentEnd="true"
         android:src="@drawable/ic_download"
         android:padding="10dp"
-        android:scaleType="fitCenter"/>
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/download_btn" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:layout_above="@id/music_nav_bar"
