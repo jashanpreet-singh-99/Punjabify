@@ -2,6 +2,8 @@ package com.ck.dev.punjabify.fragments.home;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -215,6 +217,13 @@ public class MediaControlUI extends Fragment {
             }
             titleTxtView.setText(currentOnlineTrack.getTitle());
             artistTxtView.setText(currentOnlineTrack.getArtist());
+
+            if (currentOnlineTrack.getDownloaded() == 1) {
+                downloadBtn.setImageTintList(ColorStateList.valueOf(Color.DKGRAY));
+            } else {
+                downloadBtn.setImageTintList(ColorStateList.valueOf(Color.WHITE));
+            }
+
             AlbumArtLoader albumArtLoader = new AlbumArtLoader();
             albumArtLoader.setMetaData(
                     getActivity(),
