@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1047815076040-kr62k7i5tgof540m3au3u8erdf86d2kf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ck.dev.punjabify",
+            "certificate_hash": "5b8fc4a0a446f0decf4c43682a0807ae13fe610c"
+          }
+        },
+        {
           "client_id": "1047815076040-rmeje2t91aoqrq5jb0jsfbj5a9ebls5b.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
