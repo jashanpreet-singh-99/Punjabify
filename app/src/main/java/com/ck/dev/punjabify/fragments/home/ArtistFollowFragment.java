@@ -42,10 +42,10 @@ public class ArtistFollowFragment extends Fragment implements OnArtistRecyclerVi
     private ArtistCircularListFollowedAdapter circularListFollowedAdapter;
     private ServerizedManager serverizedManager;
 
-    private ArrayList<String> artistList = new ArrayList<>();
-    private ArrayList<String> followedArtistList = new ArrayList<>();
+    private final ArrayList<String> artistList = new ArrayList<>();
+    private final ArrayList<String> followedArtistList = new ArrayList<>();
 
-    private HomeToOnlineFragment homeToOnlineFragment;
+    private final HomeToOnlineFragment homeToOnlineFragment;
 
     private ThreadPoolManager threadPoolManager;
 
@@ -89,18 +89,18 @@ public class ArtistFollowFragment extends Fragment implements OnArtistRecyclerVi
         refreshedDBValues();
     }
 
+    /**
+     * Can add a new method with the updated artist name to better adapt to the change in artist as it loads.
+     */
     public void refreshedDBValues() {
-        Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                artistList.clear();
-                artistList.addAll(serverizedManager.getArtistsNameOnly(ServerizedConfig.ARTIST_MODE_UN_FOLLOWED));
-                artistCircularList3HorizontalAdapter.notifyDataSetChanged();
-                followedArtistList.clear();
-                followedArtistList.addAll(serverizedManager.getArtistsNameOnly(ServerizedConfig.ARTIST_MODE_FOLLOWED));
-                circularListFollowedAdapter.notifyDataSetChanged();
-                downloadArtistImages();
-            }
+        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+            artistList.clear();
+            artistList.addAll(serverizedManager.getArtistsNameOnly(ServerizedConfig.ARTIST_MODE_UN_FOLLOWED));
+            artistCircularList3HorizontalAdapter.notifyDataSetChanged();
+            followedArtistList.clear();
+            followedArtistList.addAll(serverizedManager.getArtistsNameOnly(ServerizedConfig.ARTIST_MODE_FOLLOWED));
+            circularListFollowedAdapter.notifyDataSetChanged();
+            downloadArtistImages();
         });
     }
 
