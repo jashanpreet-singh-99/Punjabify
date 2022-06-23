@@ -47,21 +47,7 @@ public class DownloadTrackListAdapter extends Adapter<DownloadTrackListAdapter.V
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         holder.titleTrackTxt.setText(data.get(position).getTrackData().getTitle());
-        if (data.get(position).getProgress() <= 0) {
-            holder.downloadTxt.setText("Waiting in Queue.");
-        } else {
-            holder.downloadTxt.setText(String.format(Locale.ENGLISH, "DOWNLOADING %d%%", data.get(position).getProgress()));
-        }
-        if (position != 0) {
-            holder.progressBar.setVisibility(View.GONE);
-            mode = 0;
-        } else {
-            if (holder.progressBar.getVisibility() == View.GONE) {
-                holder.progressBar.setVisibility(View.VISIBLE);
-            }
-            holder.progressBar.setProgress(data.get(position).getProgress());
-            mode = 2;
-        }
+        mode = 0;
         holder.albumArt.setBackgroundResource(R.color.colorAccent);
         AlbumArtLoader albumArtLoader = new AlbumArtLoader();
         albumArtLoader.setMetaData(
@@ -73,12 +59,7 @@ public class DownloadTrackListAdapter extends Adapter<DownloadTrackListAdapter.V
                 mode
         );
         ThreadPoolManager.getInstance().addCallable(albumArtLoader, ThreadConfig.IMAGE_LOAD);
-        holder.cancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onDownloadQueueClicks.onTrackCanceled(position);
-            }
-        });
+        holder.cancelBtn.setOnClickListener(v -> onDownloadQueueClicks.onTrackCanceled(position));
     }
 
     @Override
@@ -88,19 +69,15 @@ public class DownloadTrackListAdapter extends Adapter<DownloadTrackListAdapter.V
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView    titleTrackTxt;
-        private TextView    downloadTxt;
-        private ImageButton cancelBtn;
-        private ImageButton albumArt;
-        private CircularProgress progressBar;
+        private final TextView    titleTrackTxt;
+        private final ImageButton cancelBtn;
+        private final ImageButton albumArt;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             titleTrackTxt = itemView.findViewById(R.id.track_title);
-            downloadTxt   = itemView.findViewById(R.id.downloading_progress_txt);
             cancelBtn     = itemView.findViewById(R.id.cancel_btn);
             albumArt      = itemView.findViewById(R.id.album_art_btn);
-            progressBar   = itemView.findViewById(R.id.downloading_progress);
         }
 
     }
