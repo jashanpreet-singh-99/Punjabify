@@ -170,6 +170,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 .setContentText(artist)
                 .setContentTitle(title)
                 .setCategory(Notification.CATEGORY_PROGRESS)
+                .setColorized(true)
                 .setChannelId(createNotificationChannel())
                 .setContentIntent(pendingIntent)
                 .setDeleteIntent(killPendingIntent)
@@ -311,11 +312,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             return;
         }
 
-        String link = currentOnlineTrack.getLink();
-        if (!link.equals(Config.DOWNLOADED_TRACK)) {
+        if (currentOnlineTrack.getDownloaded() == 0) {
             try {
                 mediaPlayer.setDataSource(currentOnlineTrack.getLink());
-                Config.LOG(Config.TAG_MEDIA_ONLINE, " Playing online", false);
+                Config.LOG(Config.TAG_MEDIA_ONLINE, "Playing online", false);
             } catch (Exception e) {
                 Config.LOG(Config.TAG_MEDIA, "Media Link creating problem.", true);
             }
