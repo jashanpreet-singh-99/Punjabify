@@ -35,6 +35,7 @@ public class TrackUrlDownloader implements Runnable {
             }
             checkDir();
             File track = new File(path + trackData.getArtist().replace(" ", "_") + "/" + trackData.getTitle().replace(" ", "_") + ".mp3");
+            //Config.LOG(Config.TAG_DOWNLOAD, "Download Path :" + path + trackData.getArtist().replace(" ", "_") + "/" + trackData.getTitle().replace(" ", "_") + ".mp3", true);
             URL url = new URL(trackData.getLink());
             URLConnection connection = url.openConnection();
             connection.connect();
@@ -52,6 +53,7 @@ public class TrackUrlDownloader implements Runnable {
                 }
             }
             if (uiTrackDownloadingThreadCallBackWeakReference.get() != null) {
+                uiTrackDownloadingThreadCallBackWeakReference.get().startTrackDownload(trackData);
                 uiTrackDownloadingThreadCallBackWeakReference.get().updateMax(total);
             }
             FileOutputStream fileOutputStream = new FileOutputStream(track);
