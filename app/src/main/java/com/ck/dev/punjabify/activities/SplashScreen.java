@@ -97,7 +97,9 @@ public class SplashScreen extends Activity {
         if (deniedCount == 0) {
             startNextActivity();
         } else {
-            checkPermission();
+            if (checkPermission()) {
+                startNextActivity();
+            }
         }
     }
 }
