@@ -68,24 +68,24 @@
                 android:id="@+id/mobile_number_txt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="XXXXX-XXXXX"
+                android:hint="@string/xxxxx_xxxxx"
                 android:textStyle="normal"
                 android:textSize="20sp"
                 android:textAlignment="center"
-                android:inputType="number"
                 android:maxLength="10"
                 android:focusable="true"
                 android:padding="15dp"
                 android:focusableInTouchMode="true"
                 android:background="@drawable/rounded_btn_20"
                 android:backgroundTint="#222"
-                android:layout_margin="10dp"/>
+                android:layout_margin="10dp"
+                android:autofillHints="no" />
 
             <Button
                 android:id="@+id/continue_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Continue"
+                android:text="continue"
                 android:textColor="@color/colorTextPrimary"
                 android:textStyle="normal"
                 android:textSize="18sp"
