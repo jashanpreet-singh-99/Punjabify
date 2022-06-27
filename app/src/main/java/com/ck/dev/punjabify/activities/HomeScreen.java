@@ -608,36 +608,7 @@ public class HomeScreen extends FragmentActivity implements MusicControlConnecti
         } else {
             startService(intent);
         }
-        //bindService(intent, , BIND_AUTO_CREATE);
-//        databaseReference = FirebaseDatabase.getInstance().getReference();
-//        databaseReference.child("user").child(PreferenceManager.getString(getApplicationContext(), FirebaseConfig.USER_ID)).addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                if (Objects.requireNonNull(snapshot.getValue(String.class)).equals("yes")) {
-//                    databaseReference.child("tracks").addListenerForSingleValueEvent(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                            Config.LOG(Config.TAG_MEDIA_ONLINE, "Online Data Fetch ", false);
-//                            ServerizedDataFetcher serverizedDataFetcher = new ServerizedDataFetcher();
-//                            serverizedDataFetcher.setMetaData(dataSnapshot, serverizedManager, getCacheDir() + Config.TRACKS_DIR, HomeScreen.this);
-//                            threadPoolManager.addCallable(serverizedDataFetcher, ThreadConfig.SERVERIZED_DATA);
-//                        }
-//
-//                        @Override
-//                        public void onCancelled(@NonNull DatabaseError databaseError) {
-//                            Config.LOG(Config.TAG_MEDIA_ONLINE, "Error Online Track Fetch : " + databaseError, false);
-//                        }
-//                    });
-//                } else {
-//                    Config.LOG(Config.TAG_MEDIA_ONLINE, "Tracks are already updated.", false);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                Config.LOG(Config.TAG_MEDIA_ONLINE, "Tracks are already updated.", false);
-//            }
-//        });
+        bindService(intent, updateServiceConnection, BIND_AUTO_CREATE);
     }
 
     @Override
