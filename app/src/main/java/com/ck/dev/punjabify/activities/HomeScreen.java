@@ -14,7 +14,6 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -49,6 +48,7 @@ import com.ck.dev.punjabify.utils.PreferenceManager;
 import com.ck.dev.punjabify.utils.ServerizedManager;
 import com.ck.dev.punjabify.view.NotificationDialogs;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -147,6 +147,8 @@ public class HomeScreen extends FragmentActivity implements MusicControlConnecti
 
         serverizedManager = new ServerizedManager(getApplicationContext());
         trackQueueServerized = serverizedManager.getQueue();
+
+        databaseReference = FirebaseDatabase.getInstance().getReference();
 
         checkPreviousTrackData();
 
