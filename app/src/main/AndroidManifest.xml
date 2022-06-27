@@ -35,6 +35,8 @@
 
         <service android:name=".services.MediaPlayerService" />
         <service android:name=".services.DownloadManagerService" />
+        <service android:name=".services.UpdateDatabaseService" />
+
         <receiver android:name=".broadcast.InternetConnectionReceiver" />
     </application>
 

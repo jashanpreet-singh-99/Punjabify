@@ -36,11 +36,11 @@ import com.ck.dev.punjabify.interfaces.ViewPagerBackPressed;
 import com.ck.dev.punjabify.model.ServerizedTrackData;
 import com.ck.dev.punjabify.observers.HomeObservableObject;
 import com.ck.dev.punjabify.services.MediaPlayerService;
+import com.ck.dev.punjabify.services.UpdateDatabaseService;
 import com.ck.dev.punjabify.threads.ThreadConfig;
 import com.ck.dev.punjabify.threads.ThreadPoolManager;
 import com.ck.dev.punjabify.threads.interfaces.OnServerizedDataFetchCompleted;
 import com.ck.dev.punjabify.threads.tasks.AlbumArtLoader;
-import com.ck.dev.punjabify.threads.tasks.ServerizedDataFetcher;
 import com.ck.dev.punjabify.utils.Config;
 import com.ck.dev.punjabify.utils.FirebaseConfig;
 import com.ck.dev.punjabify.utils.MediaCallBackConfig;
@@ -48,11 +48,7 @@ import com.ck.dev.punjabify.utils.PreferenceConfig;
 import com.ck.dev.punjabify.utils.PreferenceManager;
 import com.ck.dev.punjabify.utils.ServerizedManager;
 import com.ck.dev.punjabify.view.NotificationDialogs;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -62,10 +58,10 @@ import java.util.Observer;
 /**
  * LifeCycle -|
  *            |
- *            ^
+ *           |_|
  *    Create Views
  *            |
- *    Start Thread to Fetch Data from server
+ *    Start UpdateDatabaseService to Fetch Data from server
  *            |
  */
 
@@ -590,36 +586,58 @@ public class HomeScreen extends FragmentActivity implements MusicControlConnecti
         }
     }
 
+    private final ServiceConnection updateServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Config.LOG(Config.TAG_MEDIA_ONLINE, "Service Connected with Update Track Server.", false);
+            UpdateDatabaseService.LocalBinder binder = (UpdateDatabaseService.LocalBinder) service;
+            UpdateDatabaseService updateDatabaseService = binder.getService();
+            updateDatabaseService.setListener(HomeScreen.this);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Config.LOG(Config.TAG_MEDIA, "Update Service Disconnected from UI.", true);
+        }
+    };
+
     private void fetchServerizedData() {
-        databaseReference = FirebaseDatabase.getInstance().getReference();
-        databaseReference.child("user").child(PreferenceManager.getString(getApplicationContext(), FirebaseConfig.USER_ID)).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (Objects.requireNonNull(snapshot.getValue(String.class)).equals("yes")) {
-                    databaseReference.child("tracks").addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            Config.LOG(Config.TAG_MEDIA_ONLINE, "Online Data Fetch ", false);
-                            ServerizedDataFetcher serverizedDataFetcher = new ServerizedDataFetcher();
-                            serverizedDataFetcher.setMetaData(dataSnapshot, serverizedManager, getCacheDir() + Config.TRACKS_DIR, HomeScreen.this);
-                            threadPoolManager.addCallable(serverizedDataFetcher, ThreadConfig.SERVERIZED_DATA);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Config.LOG(Config.TAG_MEDIA_ONLINE, "Error Online Track Fetch : " + databaseError, false);
-                        }
-                    });
-                } else {
-                    Config.LOG(Config.TAG_MEDIA_ONLINE, "Tracks are already updated.", false);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Config.LOG(Config.TAG_MEDIA_ONLINE, "Tracks are already updated.", false);
-            }
-        });
+        Intent intent = new Intent(getApplicationContext(), UpdateDatabaseService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent);
+        } else {
+            startService(intent);
+        }
+        //bindService(intent, , BIND_AUTO_CREATE);
+//        databaseReference = FirebaseDatabase.getInstance().getReference();
+//        databaseReference.child("user").child(PreferenceManager.getString(getApplicationContext(), FirebaseConfig.USER_ID)).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                if (Objects.requireNonNull(snapshot.getValue(String.class)).equals("yes")) {
+//                    databaseReference.child("tracks").addListenerForSingleValueEvent(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                            Config.LOG(Config.TAG_MEDIA_ONLINE, "Online Data Fetch ", false);
+//                            ServerizedDataFetcher serverizedDataFetcher = new ServerizedDataFetcher();
+//                            serverizedDataFetcher.setMetaData(dataSnapshot, serverizedManager, getCacheDir() + Config.TRACKS_DIR, HomeScreen.this);
+//                            threadPoolManager.addCallable(serverizedDataFetcher, ThreadConfig.SERVERIZED_DATA);
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(@NonNull DatabaseError databaseError) {
+//                            Config.LOG(Config.TAG_MEDIA_ONLINE, "Error Online Track Fetch : " + databaseError, false);
+//                        }
+//                    });
+//                } else {
+//                    Config.LOG(Config.TAG_MEDIA_ONLINE, "Tracks are already updated.", false);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                Config.LOG(Config.TAG_MEDIA_ONLINE, "Tracks are already updated.", false);
+//            }
+//        });
     }
 
     @Override

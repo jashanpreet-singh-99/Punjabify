@@ -10,6 +10,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.ck.dev.punjabify.model.ServerizedTrackData;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -452,6 +454,21 @@ public class ServerizedManager extends SQLiteOpenHelper {
             );
             Config.LOG(Config.TAG_DATABASE, "Track Year Added " + year + " " + trackData.getTitle(), false);
             data.add(trackData);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return data;
+    }
+
+    public Map<String, Integer> getArtistMap() {
+        Map<String, Integer> data = new HashMap<>();
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.rawQuery("SELECT " + ServerizedConfig.COLUMN_ARTIST + ", COUNT(*) FROM " + ServerizedConfig.TABLE_NAME + " GROUP BY " + ServerizedConfig.COLUMN_ARTIST, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            //Config.LOG(Config.TAG_DATABASE, "Track Artist " + cursor.getString(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_ARTIST)) + " : " +
+                    //cursor.getInt(1), false);
+            data.put(cursor.getString(cursor.getColumnIndexOrThrow(ServerizedConfig.COLUMN_ARTIST)), cursor.getInt(1));
             cursor.moveToNext();
         }
         cursor.close();

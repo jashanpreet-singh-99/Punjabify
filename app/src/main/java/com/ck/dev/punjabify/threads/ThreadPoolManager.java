@@ -18,15 +18,15 @@ import java.util.concurrent.TimeUnit;
 
 public class ThreadPoolManager {
 
-    private static ThreadPoolManager instance;
+    private static final ThreadPoolManager instance;
 
-    private static final int KEEP_ALIVE_TIME = 1;
+    private static final int KEEP_ALIVE_TIME = 10;
 
     private static final TimeUnit KEEP_ALIVE_TIME_UNIT;
 
     private final ExecutorService executorService;
     private final BlockingQueue<Runnable> taskQueue;
-    private List<Future> runningTaskList;
+    private final List<Future> runningTaskList;
 
     static {
         KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS;
@@ -36,7 +36,7 @@ public class ThreadPoolManager {
     private ThreadPoolManager() {
         taskQueue = new LinkedBlockingQueue<>();
         runningTaskList = new ArrayList<>();
-        int NUMBER_OF_CORES = 4;
+        int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
         executorService = new ThreadPoolExecutor(
                 NUMBER_OF_CORES,
                 NUMBER_OF_CORES * 2,
@@ -76,12 +76,7 @@ public class ThreadPoolManager {
             int tag = 1;
             thread.setName("Punjabify_Thread" + tag);
             thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
-            thread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-                @Override
-                public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
-                    Config.LOG(Config.TAG_THREAD, "Thread Error TAG : " + t.getName() + " -> " + e.getMessage(), true);
-                }
-            });
+            thread.setUncaughtExceptionHandler((t, e) -> Config.LOG(Config.TAG_THREAD, "Thread Error TAG : " + t.getName() + " -> " + e.getMessage(), true));
             return thread;
         }
     }
