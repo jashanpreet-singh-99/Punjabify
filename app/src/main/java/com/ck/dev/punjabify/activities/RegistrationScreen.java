@@ -15,10 +15,7 @@ import com.ck.dev.punjabify.interfaces.RegistrationFragmentConnection;
 import com.ck.dev.punjabify.utils.Config;
 import com.ck.dev.punjabify.utils.FirebaseConfig;
 import com.ck.dev.punjabify.utils.PreferenceManager;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
@@ -132,7 +129,7 @@ public class RegistrationScreen extends FragmentActivity implements Registration
                 onVerifyCallBack);
     }//getOTP
 
-    private PhoneAuthProvider.OnVerificationStateChangedCallbacks onVerifyCallBack = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+    private final PhoneAuthProvider.OnVerificationStateChangedCallbacks onVerifyCallBack = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         @Override
         public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
             Config.LOG(Config.TAG_REGISTRATION, "SIGN IN ", false);
@@ -165,26 +162,23 @@ public class RegistrationScreen extends FragmentActivity implements Registration
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         firebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            String id = FirebaseAuth.getInstance().getUid();
-                            FirebaseDatabase.getInstance().getReference("user").child(Objects.requireNonNull(id)).setValue("yes");
-                            PreferenceManager.setString(getApplicationContext(), FirebaseConfig.USER_ID, id);
-                            new AlertDialog.Builder(RegistrationScreen.this)
-                                    .setTitle("OTP Verified")
-                                    .setMessage("Welcome to Punjabify. We hope, you will enjoy our music collections.")
-                                    .setCancelable(true).show();
-                            startActivity(new Intent(getApplicationContext(), SplashScreen.class));
-                            finish();
-                        } else {
-                            Config.LOG(Config.TAG_REGISTRATION, "VERIFICATION FAILED " , true);
-                            new AlertDialog.Builder(RegistrationScreen.this)
-                                    .setTitle("Verification Failed")
-                                    .setMessage("Incorrect OTP. Try again later.")
-                                    .setCancelable(true).show();
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        String id = FirebaseAuth.getInstance().getUid();
+                        FirebaseDatabase.getInstance().getReference("user").child(Objects.requireNonNull(id)).setValue("yes");
+                        PreferenceManager.setString(getApplicationContext(), FirebaseConfig.USER_ID, id);
+                        new AlertDialog.Builder(RegistrationScreen.this)
+                                .setTitle("OTP Verified")
+                                .setMessage("Welcome to Punjabify. We hope, you will enjoy our music collections.")
+                                .setCancelable(true).show();
+                        startActivity(new Intent(getApplicationContext(), SplashScreen.class));
+                        finish();
+                    } else {
+                        Config.LOG(Config.TAG_REGISTRATION, "VERIFICATION FAILED " , true);
+                        new AlertDialog.Builder(RegistrationScreen.this)
+                                .setTitle("Verification Failed")
+                                .setMessage("Incorrect OTP. Try again later.")
+                                .setCancelable(true).show();
                     }
                 });
     }//signInWithPhoneAuthCredential

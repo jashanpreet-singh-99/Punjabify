@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/ic_sync.xml" value="0.203" />
         <entry key="app/src/main/res/layout/fragment_download.xml" value="0.375" />
         <entry key="app/src/main/res/layout/fragment_music_control.xml" value="0.3591485507246377" />
         <entry key="app/src/main/res/layout/fragment_registration_mobile_number.xml" value="0.2164855072463768" />
