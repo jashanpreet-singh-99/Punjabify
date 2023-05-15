@@ -11,23 +11,26 @@ Welcome to Punjabify, your ultimate destination for exploring and enjoying the r
 ## Key Features:
 
 ## Extensive Collection of Punjabi Tracks
-![Artist](https://raw.githubusercontent.com/jashanpreet-singh-99/Punjabify/master/device-2020-07-18-230554.png)
+<img src="https://raw.githubusercontent.com/jashanpreet-singh-99/Punjabify/master/device-2020-07-18-230554.png" width="240">
+
 Punjabify employs advanced web scraping technology to curate a vast and diverse selection of Punjabi music. Our comprehensive database ensures that you'll never miss out on the latest hits or timeless classics.
 
 ## Listen and Download for Free
 Enjoy an ad-free music experience without any interruptions. Stream your favorite Punjabi tracks on-demand and download them to your device with just a few taps. Listen to your beloved music anytime, anywhere, without any restrictions.
 
 ## Artist-Specific Downloads
-![Artist](https://raw.githubusercontent.com/jashanpreet-singh-99/Punjabify/master/device-2020-07-18-001742.png)
+<img src="https://raw.githubusercontent.com/jashanpreet-singh-99/Punjabify/master/device-2020-07-18-001742.png" width="240">
+
 Punjabify caters to your individual preferences by allowing you to discover and download music specifically by your favorite artists. With a single click, you can access an entire collection of tracks composed by a particular artist, ensuring you never miss a beat.
 
 ## User-Friendly Interface
-![Interface](https://raw.githubusercontent.com/jashanpreet-singh-99/Punjabify/master/device-2020-07-18-001608.png)
+<img src="https://raw.githubusercontent.com/jashanpreet-singh-99/Punjabify/master/device-2020-07-18-001608.png" width="240">
 Punjabify boasts an intuitive and user-friendly interface, designed to enhance your music exploration journey. Seamlessly navigate through various genres, artists, and albums to find the perfect Punjabi tracks that resonate with your mood and taste.
 
 ## Personalized Playlists
-<img src="https://raw.githubusercontent.com/jashanpreet-singh-99/Punjabify/master/device-2020-07-18-001711.png" width="300">
-<!-- ![Playlist](https://raw.githubusercontent.com/jashanpreet-singh-99/Punjabify/master/device-2020-07-18-001711.png) -->
+
+<img src="https://raw.githubusercontent.com/jashanpreet-singh-99/Punjabify/master/device-2020-07-18-001711.png" width="240">
+
 Create and customize your own playlists within Punjabify. Organize your favorite tracks, albums, and artists into personalized collections, enabling you to easily access and enjoy your preferred Punjabi music.
 
 ## Offline Listening
