@@ -26,7 +26,8 @@ Punjabify caters to your individual preferences by allowing you to discover and 
 Punjabify boasts an intuitive and user-friendly interface, designed to enhance your music exploration journey. Seamlessly navigate through various genres, artists, and albums to find the perfect Punjabi tracks that resonate with your mood and taste.
 
 ## Personalized Playlists
-![Playlist](https://raw.githubusercontent.com/jashanpreet-singh-99/Punjabify/master/device-2020-07-18-001711.png)
+<img src="https://raw.githubusercontent.com/jashanpreet-singh-99/Punjabify/master/device-2020-07-18-001711.png" width="300">
+<!-- ![Playlist](https://raw.githubusercontent.com/jashanpreet-singh-99/Punjabify/master/device-2020-07-18-001711.png) -->
 Create and customize your own playlists within Punjabify. Organize your favorite tracks, albums, and artists into personalized collections, enabling you to easily access and enjoy your preferred Punjabi music.
 
 ## Offline Listening
